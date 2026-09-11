@@ -9,7 +9,7 @@ Notes:
   including testing of "edge cases"
 """
 
-from py_friends.friends import Friends
+from py_friends.friends import Friends as _ProvidedFriends
 
 """
 ************** READ THIS ***************
@@ -174,6 +174,37 @@ def find_smallest_team(my_dir):
     # ------------ END YOUR CODE
 
     return smallest_teams[0] if smallest_teams else ""
+
+
+class Friends:
+    """Iterator over all unique friendship relations in a directory.
+
+    Yields each undirected friendship exactly once, as an ordered
+    2-tuple (a, b) with a < b in ASCII order, and produces the tuples
+    themselves in ASCII order.
+
+    The Friends class provided in py_friends/friends.py contains bugs
+    (it does not order the relations, and it can emit each undirected
+    pair twice). This corrected version is defined here so that
+    myfriends.Friends satisfies the specification.
+    """
+
+    def __init__(self, directory):
+        unique_pairs = set()
+        for person, friends in directory.items():
+            for friend in friends:
+                if person == friend:
+                    # a person is not their own friend
+                    continue
+                # canonical ordering makes (x, y) and (y, x) identical,
+                # so each undirected relation is stored only once
+                unique_pairs.add(tuple(sorted((person, friend))))
+        # iterate the relations in ASCII order
+        self._pairs = sorted(unique_pairs)
+
+    def __iter__(self):
+        # return a fresh iterator each time, so the object is re-iterable
+        return iter(self._pairs)
 
 
 
